@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Prospection"/>
+<meta name="theme-color" content="#534AB7"/>
+<title>Ma Prospection</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+--p:#7F77DD;--pl:#EEEDFE;--pd:#3C3489;
+--g:#1D9E75;--gl:#E1F5EE;--gd:#085041;
+--a:#BA7517;--al:#FAEEDA;--ad:#633806;
+--r:#E24B4A;--rl:#FCEBEB;--rd:#791F1F;
+--bg:#fff;--bg2:#f5f5f7;--bg3:#ececec;
+--tx:#111;--tx2:#666;--tx3:#999;
+--bd:rgba(0,0,0,.12);--bd2:rgba(0,0,0,.2);
+}
+@media(prefers-color-scheme:dark){:root{
+--bg:#111;--bg2:#1c1c1e;--bg3:#2c2c2e;
+--tx:#fff;--tx2:#aaa;--tx3:#666;
+--bd:rgba(255,255,255,.1);--bd2:rgba(255,255,255,.2);
+--pl:#2a2660;--pd:#AFA9EC;
+--gl:#0a2e20;--gd:#5DCAA5;
+--al:#2e1e00;--ad:#EF9F27;
+}}
+html,body{height:100%;background:var(--bg3);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.app{display:flex;flex-direction:column;min-height:100vh;max-width:480px;margin:0 auto;background:var(--bg);box-shadow:0 0 40px rgba(0,0,0,.15)}
+
+/* HERO */
+.hero{position:relative;overflow:hidden}
+.hero svg{display:block;width:100%}
+.hero-overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:env(safe-area-inset-top,16px) 20px 20px}
+.progress-wrap{padding:0 0 12px}
+.progress-label{display:flex;justify-content:space-between;margin-bottom:6px}
+.progress-label span{font-size:12px;color:rgba(255,255,255,.85);font-weight:400}
+.progress-label span:last-child{font-weight:600}
+.progress-track{height:5px;background:rgba(255,255,255,.25);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:#fff;border-radius:3px;transition:width .6s ease}
+.hero-greeting{font-size:12px;color:rgba(255,255,255,.8);margin-bottom:2px}
+.hero-title{font-size:24px;font-weight:700;color:#fff;letter-spacing:-.3px}
+.hero-badge{display:inline-block;margin-top:8px;background:rgba(255,255,255,.22);color:#fff;font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px}
+.hero-dots{position:absolute;top:14px;right:14px;display:flex;gap:5px}
+.hdot{width:6px;height:6px;border-radius:3px;background:rgba(255,255,255,.4);cursor:pointer;transition:all .25s}
+.hdot.active{width:18px;background:#fff}
+
+/* TABS */
+.tabs{display:flex;padding:12px 12px 0;gap:6px;background:var(--bg)}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px 12px;font-size:11px;font-weight:600;color:var(--tx2);cursor:pointer;border-radius:12px 12px 0 0;border:0.5px solid transparent;background:var(--bg2);transition:all .2s;border-bottom:none;-webkit-tap-highlight-color:transparent}
+.tab i{font-size:22px}
+.tab.t0.active{background:var(--bg);color:var(--pd);border-color:var(--bd)}
+.tab.t1.active{background:var(--bg);color:var(--gd);border-color:var(--bd)}
+.tab.t2.active{background:var(--bg);color:var(--ad);border-color:var(--bd)}
+.tab-count{font-size:10px;background:var(--bg3);border-radius:8px;padding:1px 6px;min-width:18px;text-align:center}
+.tab.t0.active .tab-count{background:var(--pl);color:var(--pd)}
+.tab.t1.active .tab-count{background:var(--gl);color:var(--gd)}
+.tab.t2.active .tab-count{background:var(--al);color:var(--ad)}
+
+/* PANELS */
+.panel{display:none;flex-direction:column;border-top:0.5px solid var(--bd)}
+.panel.active{display:flex}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:14px 14px}
+.kpi{border-radius:12px;padding:12px 14px}
+.kpi-n{font-size:28px;font-weight:700;line-height:1}
+.kpi-l{font-size:11px;margin-top:3px;opacity:.75}
+.kpi.k0{background:var(--pl);color:var(--pd)}
+.kpi.k1{background:var(--gl);color:var(--gd)}
+.kpi.k2{background:var(--al);color:var(--ad)}
+.kpi.k-wait{background:#FFF8E6;color:#7A5500}
+.kpi.k-ok{background:#E8F5E9;color:#1b5e20}
+.kpi.k-no{background:var(--rl);color:var(--rd)}
+
+/* LIST */
+.list-top{display:flex;justify-content:space-between;align-items:center;padding:4px 14px 10px}
+.list-top-label{font-size:13px;color:var(--tx2)}
+.add-btn{display:flex;align-items:center;gap:5px;border:none;border-radius:24px;padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .15s,transform .1s;color:#fff;-webkit-tap-highlight-color:transparent}
+.add-btn:active{opacity:.8;transform:scale(0.96)}
+.a0{background:var(--p)}.a1{background:var(--g)}.a2{background:var(--a)}
+
+/* ENTRIES */
+.entries{padding:0 14px 32px;display:flex;flex-direction:column;gap:10px}
+.entry-card{background:var(--bg);border:0.5px solid var(--bd);border-radius:18px;overflow:hidden;-webkit-tap-highlight-color:transparent;transition:transform .1s}
+.entry-card:active{transform:scale(0.99)}
+.entry-card.done{border-left:3px solid var(--g)}
+.entry-card.refused{border-left:3px solid var(--r);opacity:.7}
+.card-body{display:flex;align-items:center;gap:12px;padding:14px 14px 10px}
+.avatar{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.av0{background:var(--pl)}.av1{background:var(--gl)}.av2{background:var(--al)}
+.card-info{flex:1;min-width:0}
+.card-name{font-size:15px;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-meta{font-size:12px;color:var(--tx2);margin-top:3px}
+.sp{font-size:10px;font-weight:600;padding:3px 9px;border-radius:12px;white-space:nowrap;flex-shrink:0}
+.sp-attente{background:#FFF8E6;color:#7A5500}
+.sp-contact{background:var(--pl);color:var(--pd)}
+.sp-ok{background:#E8F5E9;color:#1b5e20}
+.sp-non{background:var(--rl);color:var(--rd)}
+.card-note{padding:0 14px 10px;font-size:12px;color:var(--tx2);font-style:italic;line-height:1.5;border-bottom:0.5px solid var(--bd)}
+.card-actions{display:flex}
+.ca{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:12px 6px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:transparent;-webkit-tap-highlight-color:transparent;transition:background .15s;color:var(--tx2)}
+.ca:not(:last-child){border-right:0.5px solid var(--bd)}
+.ca:active{background:var(--bg2)}
+.ca i{font-size:16px}
+.ca.ca-call{color:var(--g)}.ca.ca-mail{color:var(--p)}
+
+/* EMPTY */
+.empty{display:flex;flex-direction:column;align-items:center;padding:48px 24px;gap:10px;color:var(--tx2);text-align:center}
+.empty i{font-size:52px;opacity:.15}
+.empty p{font-size:14px;line-height:1.7}
+.empty-cta{margin-top:6px;font-size:14px;font-weight:600;padding:12px 24px;border-radius:24px;border:none;cursor:pointer;color:#fff}
+
+/* TOAST */
+.toast{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(10px);background:rgba(0,0,0,.85);color:#fff;padding:10px 22px;border-radius:24px;font-size:14px;z-index:999;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;white-space:nowrap;backdrop-filter:blur(10px)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg);border-radius:28px 28px 0 0;padding:16px 20px calc(32px + env(safe-area-inset-bottom));width:100%;max-width:480px;max-height:92vh;overflow-y:auto}
+.modal-handle{width:44px;height:4px;background:var(--bd2);border-radius:2px;margin:0 auto 20px}
+.modal-head{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.modal-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.modal-title{font-size:18px;font-weight:700;color:var(--tx)}
+.fg{margin-bottom:14px}
+.fl{font-size:11px;font-weight:700;color:var(--tx2);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.5px}
+.fi{width:100%;padding:12px 14px;border:1px solid var(--bd);border-radius:12px;font-size:16px;background:var(--bg);color:var(--tx);-webkit-appearance:none;appearance:none;outline:none}
+.fi:focus{border-color:var(--p)}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modal-actions{display:flex;gap:8px;margin-top:20px}
+.btn-save{flex:1;padding:14px;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;color:#fff;-webkit-tap-highlight-color:transparent}
+.bs0{background:var(--p)}.bs1{background:var(--g)}.bs2{background:var(--a)}
+.btn-cancel{padding:14px 16px;background:transparent;color:var(--tx2);border:1px solid var(--bd);border-radius:14px;font-size:16px;cursor:pointer}
+.btn-del{padding:14px;background:transparent;color:var(--r);border:1px solid var(--rl);border-radius:14px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="hero">
+    <svg id="hero-svg" viewBox="0 0 380 200" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%"></svg>
+    <div class="hero-dots" id="hero-dots"></div>
+    <div class="hero-overlay">
+      <div class="progress-wrap">
+        <div class="progress-label"><span>Progression globale</span><span id="pct-label">0%</span></div>
+        <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+      </div>
+      <div class="hero-greeting" id="greeting">Bonne journée !</div>
+      <div class="hero-title">Ta prospection</div>
+      <div class="hero-badge" id="hero-badge">0 contact</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab t0 active" onclick="switchTab(0)" id="tab-0"><i class="ti ti-building"></i>Entreprises<span class="tab-count" id="tc-0">0</span></div>
+    <div class="tab t1" onclick="switchTab(1)" id="tab-1"><i class="ti ti-school"></i>Lycées<span class="tab-count" id="tc-1">0</span></div>
+    <div class="tab t2" onclick="switchTab(2)" id="tab-2"><i class="ti ti-home"></i>Logements<span class="tab-count" id="tc-2">0</span></div>
+  </div>
+
+  <div class="panel active" id="panel-0"></div>
+  <div class="panel" id="panel-1"></div>
+  <div class="panel" id="panel-2"></div>
+</div>
+
+<div class="toast" id="toast">Copié !</div>
+
+<div class="modal-overlay" id="modal" onclick="closeIfOut(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-head"><div class="modal-icon" id="mi"></div><div class="modal-title" id="mt"></div></div>
+    <div id="mb"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+      <button class="btn-del" id="bdel" onclick="delEntry()" style="display:none"><i class="ti ti-trash"></i></button>
+      <button class="btn-save" id="bsave" onclick="saveEntry()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const TC=[
+  {key:'entreprises',label:'entreprise',icon:'ti-building',av:'av0',ac:'a0',bs:'bs0',lclr:'var(--pl)',dclr:'var(--pd)',kc:'k0'},
+  {key:'lycees',label:'lycée',icon:'ti-school',av:'av1',ac:'a1',bs:'bs1',lclr:'var(--gl)',dclr:'var(--gd)',kc:'k1'},
+  {key:'logements',label:'logement',icon:'ti-home',av:'av2',ac:'a2',bs:'bs2',lclr:'var(--al)',dclr:'var(--ad)',kc:'k2'},
+];
+const SL={attente:{l:'En attente',c:'sp-attente'},contact:{l:'Contacté',c:'sp-contact'},ok:{l:'Accord ✓',c:'sp-ok'},non:{l:'Refus',c:'sp-non'}};
+const POOL=[['🏢','🏗','💼','🌐','📦','🏭'],['🏫','📚','🎓','✏️','📐','🔬'],['🏠','🛋','🏡','🗝','🪴','🛏']];
+
+let data={entreprises:[],lycees:[],logements:[]};
+let ct=0,ei=-1,wsi=0,wt=null;
+
+try{const s=localStorage.getItem('prosp5');if(s)data=JSON.parse(s);}catch(e){}
+function persist(){try{localStorage.setItem('prosp5',JSON.stringify(data));}catch(e){}}
+function emoji(ti,nom){const p=POOL[ti];let h=0;for(let c of(nom||'X'))h=(h*31+c.charCodeAt(0))&0xffff;return p[h%p.length];}
+const hr=new Date().getHours();
+document.getElementById('greeting').textContent=hr<12?'Bonne matinée !':hr<18?'Bon après-midi !':'Bonne soirée !';
+
+const WALLS=[
+  [()=>`<defs><linearGradient id="g0" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a237e"/><stop offset="100%" stop-color="#534AB7"/></linearGradient></defs>
+    <rect width="380" height="200" fill="url(#g0)"/>
+    <rect x="0" y="140" width="380" height="60" fill="#0D0B40"/>
+    <rect x="20" y="80" width="60" height="80" fill="#3C3489" rx="3"/>
+    <rect x="30" y="90" width="8" height="10" fill="#AFA9EC" rx="1"/><rect x="45" y="90" width="8" height="10" fill="#AFA9EC" rx="1"/><rect x="60" y="90" width="8" height="10" fill="#7F77DD" rx="1"/>
+    <rect x="30" y="108" width="8" height="10" fill="#7F77DD" rx="1"/><rect x="45" y="108" width="8" height="10" fill="#AFA9EC" rx="1"/><rect x="60" y="108" width="8" height="10" fill="#AFA9EC" rx="1"/>
+    <rect x="30" y="126" width="20" height="14" fill="#534AB7" rx="2"/>
+    <rect x="100" y="50" width="80" height="110" fill="#26215C" rx="3"/>
+    <rect x="112" y="65" width="10" height="12" fill="#7F77DD" rx="1"/><rect x="128" y="65" width="10" height="12" fill="#AFA9EC" rx="1"/><rect x="144" y="65" width="10" height="12" fill="#7F77DD" rx="1"/><rect x="160" y="65" width="10" height="12" fill="#AFA9EC" rx="1"/>
+    <rect x="112" y="85" width="10" height="12" fill="#AFA9EC" rx="1"/><rect x="128" y="85" width="10" height="12" fill="#7F77DD" rx="1"/><rect x="144" y="85" width="10" height="12" fill="#AFA9EC" rx="1"/><rect x="160" y="85" width="10" height="12" fill="#7F77DD" rx="1"/>
+    <rect x="112" y="105" width="10" height="12" fill="#7F77DD" rx="1"/><rect x="128" y="105" width="10" height="12" fill="#AFA9EC" rx="1"/><rect x="144" y="105" width="10" height="12" fill="#7F77DD" rx="1"/><rect x="160" y="105" width="10" height="12" fill="#AFA9EC" rx="1"/>
+    <rect x="112" y="125" width="10" height="12" fill="#AFA9EC" rx="1"/><rect x="128" y="125" width="10" height="12" fill="#7F77DD" rx="1"/>
+    <rect x="130" y="138" width="20" height="22" fill="#3C3489" rx="2"/>
+    <rect x="200" y="65" width="55" height="95" fill="#3C3489" rx="3"/>
+    <rect x="212" y="78" width="8" height="10" fill="#AFA9EC" rx="1"/><rect x="227" y="78" width="8" height="10" fill="#7F77DD" rx="1"/><rect x="242" y="78" width="8" height="10" fill="#AFA9EC" rx="1"/>
+    <rect x="212" y="96" width="8" height="10" fill="#7F77DD" rx="1"/><rect x="227" y="96" width="8" height="10" fill="#AFA9EC" rx="1"/><rect x="242" y="96" width="8" height="10" fill="#7F77DD" rx="1"/>
+    <rect x="212" y="114" width="8" height="10" fill="#AFA9EC" rx="1"/><rect x="227" y="114" width="8" height="10" fill="#7F77DD" rx="1"/>
+    <rect x="224" y="138" width="10" height="22" fill="#26215C"/>
+    <rect x="272" y="82" width="70" height="78" fill="#26215C" rx="3"/>
+    <rect x="283" y="95" width="8" height="10" fill="#7F77DD" rx="1"/><rect x="298" y="95" width="8" height="10" fill="#AFA9EC" rx="1"/><rect x="313" y="95" width="8" height="10" fill="#7F77DD" rx="1"/><rect x="328" y="95" width="8" height="10" fill="#AFA9EC" rx="1"/>
+    <rect x="283" y="113" width="8" height="10" fill="#AFA9EC" rx="1"/><rect x="298" y="113" width="8" height="10" fill="#7F77DD" rx="1"/><rect x="313" y="113" width="8" height="10" fill="#AFA9EC" rx="1"/><rect x="328" y="113" width="8" height="10" fill="#7F77DD" rx="1"/>
+    <rect x="303" y="138" width="12" height="22" fill="#1a1848"/>
+    <circle cx="348" cy="28" r="18" fill="#FAEEDA" opacity=".9"/>
+    <circle cx="55" cy="22" r="7" fill="rgba(255,255,255,.12)"/>
+    <circle cx="220" cy="16" r="5" fill="rgba(255,255,255,.08)"/>`,
+  ()=>`<defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4B44CC"/><stop offset="100%" stop-color="#9590E8"/></linearGradient></defs>
+    <rect width="380" height="200" fill="url(#g1)"/>
+    <rect x="0" y="158" width="380" height="42" fill="rgba(0,0,0,.25)"/>
+    <rect x="25" y="95" width="45" height="75" fill="rgba(255,255,255,.12)" rx="3"/>
+    <rect x="82" y="65" width="65" height="105" fill="rgba(255,255,255,.16)" rx="3"/>
+    <rect x="160" y="80" width="55" height="90" fill="rgba(255,255,255,.1)" rx="3"/>
+    <rect x="228" y="55" width="75" height="115" fill="rgba(255,255,255,.18)" rx="3"/>
+    <rect x="316" y="92" width="55" height="78" fill="rgba(255,255,255,.12)" rx="3"/>
+    <rect x="10" y="92" width="5" height="78" fill="rgba(255,255,255,.06)"/>
+    <circle cx="190" cy="38" r="22" fill="rgba(255,255,255,.18)"/>
+    <text x="178" y="50" font-size="22" font-family="sans-serif">💼</text>`],
+  [()=>`<defs><linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#43B89C"/><stop offset="100%" stop-color="#085041"/></linearGradient></defs>
+    <rect width="380" height="200" fill="url(#g2)"/>
+    <rect x="0" y="152" width="380" height="48" fill="#032918"/>
+    <rect x="95" y="62" width="190" height="118" fill="#0a3d2c" rx="3"/>
+    <polygon points="90,64 285,64 265,28 110,28" fill="#063520"/>
+    <rect x="75" y="80" width="20" height="100" fill="#063520" rx="2"/>
+    <rect x="285" y="80" width="20" height="100" fill="#063520" rx="2"/>
+    <rect x="120" y="80" width="26" height="36" fill="#1D9E75" rx="2"/><rect x="156" y="80" width="26" height="36" fill="#5DCAA5" rx="2"/><rect x="192" y="80" width="26" height="36" fill="#1D9E75" rx="2"/><rect x="228" y="80" width="26" height="36" fill="#5DCAA5" rx="2"/>
+    <rect x="120" y="124" width="26" height="28" fill="#083d25"/><rect x="156" y="124" width="26" height="28" fill="#083d25"/><rect x="192" y="124" width="26" height="28" fill="#1D9E75" rx="2"/><rect x="228" y="124" width="26" height="28" fill="#083d25"/>
+    <rect x="174" y="38" width="32" height="26" fill="#052e1c"/>
+    <rect x="30" y="108" width="42" height="62" fill="#052e1c" rx="3"/>
+    <rect x="40" y="118" width="9" height="9" fill="#1D9E75" rx="1"/><rect x="54" y="118" width="9" height="9" fill="#5DCAA5" rx="1"/>
+    <rect x="40" y="133" width="9" height="9" fill="#5DCAA5" rx="1"/><rect x="54" y="133" width="9" height="9" fill="#1D9E75" rx="1"/>
+    <rect x="44" y="150" width="14" height="20" fill="#021a10"/>
+    <rect x="308" y="112" width="42" height="58" fill="#052e1c" rx="3"/>
+    <rect x="318" y="122" width="9" height="9" fill="#5DCAA5" rx="1"/><rect x="333" y="122" width="9" height="9" fill="#1D9E75" rx="1"/>
+    <rect x="318" y="137" width="9" height="9" fill="#1D9E75" rx="1"/><rect x="333" y="137" width="9" height="9" fill="#5DCAA5" rx="1"/>
+    <rect x="323" y="152" width="14" height="18" fill="#021a10"/>
+    <circle cx="48" cy="28" r="16" fill="#FAEEDA" opacity=".9"/>`,
+  ()=>`<defs><linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#9FE1CB"/><stop offset="100%" stop-color="#1D9E75"/></linearGradient></defs>
+    <rect width="380" height="200" fill="url(#g3)"/>
+    <rect x="0" y="155" width="380" height="45" fill="#032918"/>
+    <circle cx="190" cy="80" r="55" fill="rgba(255,255,255,.15)"/>
+    <text x="168" y="94" font-size="42" font-family="sans-serif">🎓</text>
+    <rect x="60" y="155" width="260" height="3" fill="#1D9E75" rx="1"/>
+    <rect x="80" y="125" width="14" height="30" fill="rgba(255,255,255,.3)" rx="2"/>
+    <rect x="108" y="130" width="14" height="25" fill="rgba(255,255,255,.2)" rx="2"/>
+    <rect x="258" y="128" width="14" height="27" fill="rgba(255,255,255,.25)" rx="2"/>
+    <rect x="288" y="122" width="14" height="33" fill="rgba(255,255,255,.3)" rx="2"/>`],
+  [()=>`<defs><linearGradient id="g4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#F5A623"/><stop offset="100%" stop-color="#633806"/></linearGradient></defs>
+    <rect width="380" height="200" fill="url(#g4)"/>
+    <circle cx="328" cy="34" r="30" fill="#FAEEDA" opacity=".88"/>
+    <rect x="0" y="152" width="380" height="48" fill="#2a1800"/>
+    <rect x="78" y="88" width="136" height="88" fill="#7A3A05" rx="4"/>
+    <polygon points="73,90 220,90 198,52 95,52" fill="#633806"/>
+    <rect x="138" y="128" width="30" height="48" fill="#4A2200" rx="3"/>
+    <rect x="88" y="103" width="22" height="22" fill="#EF9F27" rx="2" opacity=".85"/><rect x="118" y="103" width="22" height="22" fill="#FAEEDA" rx="2" opacity=".7"/>
+    <rect x="162" y="106" width="20" height="18" fill="#EF9F27" rx="2" opacity=".85"/><rect x="185" y="103" width="22" height="22" fill="#FAEEDA" rx="2" opacity=".7"/>
+    <rect x="88" y="132" width="22" height="18" fill="#FAEEDA" rx="2" opacity=".7"/><rect x="118" y="134" width="22" height="16" fill="#EF9F27" rx="2" opacity=".85"/>
+    <rect x="185" y="132" width="22" height="18" fill="#EF9F27" rx="2" opacity=".85"/>
+    <rect x="232" y="102" width="82" height="74" fill="#5E3001" rx="4"/>
+    <polygon points="226,104 320,104 306,76 240,76" fill="#4A2200"/>
+    <rect x="256" y="128" width="24" height="48" fill="#3A1800" rx="3"/>
+    <rect x="238" y="116" width="16" height="15" fill="#EF9F27" rx="1" opacity=".85"/><rect x="278" y="116" width="16" height="15" fill="#FAEEDA" rx="1" opacity=".7"/>
+    <rect x="238" y="137" width="16" height="15" fill="#FAEEDA" rx="1" opacity=".7"/><rect x="278" y="137" width="16" height="15" fill="#EF9F27" rx="1" opacity=".85"/>
+    <rect x="14" y="128" width="52" height="48" fill="#4A2200" rx="3"/>
+    <polygon points="9,130 72,130 62,108 19,108" fill="#3A1800"/>
+    <rect x="28" y="146" width="13" height="30" fill="#2a1800" rx="2"/>
+    <rect x="18" y="142" width="11" height="11" fill="#EF9F27" rx="1" opacity=".85"/><rect x="44" y="142" width="11" height="11" fill="#FAEEDA" rx="1" opacity=".7"/>`,
+  ()=>`<defs><linearGradient id="g5" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#FFD0A0"/><stop offset="100%" stop-color="#BA7517"/></linearGradient></defs>
+    <rect width="380" height="200" fill="url(#g5)"/>
+    <rect x="0" y="152" width="380" height="48" fill="#3d1f00"/>
+    <rect x="118" y="76" width="144" height="104" fill="#7A3A05" rx="6"/>
+    <polygon points="112,78 268,78 248,40 132,40" fill="#5E3001"/>
+    <rect x="172" y="122" width="36" height="58" fill="#3A1800" rx="3"/>
+    <rect x="126" y="92" width="24" height="24" fill="#EF9F27" rx="3" opacity=".9"/>
+    <rect x="160" y="92" width="24" height="24" fill="#FAEEDA" rx="3" opacity=".8"/>
+    <rect x="230" y="92" width="24" height="24" fill="#FAEEDA" rx="3" opacity=".8"/>
+    <rect x="126" y="120" width="24" height="22" fill="#FAEEDA" rx="3" opacity=".8"/>
+    <rect x="230" y="120" width="24" height="22" fill="#EF9F27" rx="3" opacity=".9"/>
+    <rect x="58" y="108" width="48" height="68" fill="#633806" rx="4"/>
+    <polygon points="52,110 112,110 102,86 62,86" fill="#4A2200"/>
+    <rect x="68" y="126" width="13" height="15" fill="#EF9F27" rx="1" opacity=".85"/>
+    <rect x="88" y="126" width="13" height="15" fill="#FAEEDA" rx="1" opacity=".8"/>
+    <rect x="74" y="148" width="16" height="28" fill="#3d1f00" rx="2"/>
+    <rect x="274" y="113" width="48" height="63" fill="#633806" rx="4"/>
+    <polygon points="268,115 328,115 318,92 278,92" fill="#4A2200"/>
+    <rect x="282" y="130" width="13" height="15" fill="#FAEEDA" rx="1" opacity=".8"/>
+    <rect x="302" y="130" width="13" height="15" fill="#EF9F27" rx="1" opacity=".85"/>
+    <rect x="288" y="150" width="16" height="26" fill="#3d1f00" rx="2"/>
+    <circle cx="42" cy="28" r="24" fill="#FAEEDA" opacity=".7"/>`]
+];
+
+function drawWall(t,i){
+  const scenes=WALLS[t];
+  document.getElementById('hero-svg').innerHTML=scenes[i%scenes.length]();
+  document.getElementById('hero-dots').innerHTML=scenes.map((_,j)=>`<div class="hdot${j===i%scenes.length?' active':''}" onclick="manualWall(${j})"></div>`).join('');
+}
+function manualWall(i){wsi=i;drawWall(ct,i);}
+function startTimer(t){
+  if(wt)clearInterval(wt);
+  if(WALLS[t].length<2)return;
+  wt=setInterval(()=>{wsi=(wsi+1)%WALLS[t].length;drawWall(t,wsi);},4500);
+}
+
+function updateGlobal(){
+  const all=[...data.entreprises,...data.lycees,...data.logements];
+  const total=all.length;
+  const done=all.filter(e=>e.statut!=='attente').length;
+  document.getElementById('hero-badge').textContent=total+' contact'+(total!==1?'s':'');
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('pct-label').textContent=pct+'%';
+  document.getElementById('prog-fill').style.width=pct+'%';
+  [0,1,2].forEach(i=>document.getElementById('tc-'+i).textContent=data[TC[i].key].length);
+}
+
+const FORMS=[
+  `<div class="fg"><label class="fl">Nom de l'entreprise</label><input class="fi" id="f-nom" placeholder="Ex: Bouygues, SNCF…"/></div>
+   <div class="fr"><div class="fg"><label class="fl">Ville</label><input class="fi" id="f-ville" placeholder="Paris"/></div><div class="fg"><label class="fl">Secteur</label><input class="fi" id="f-secteur" placeholder="Tech, BTP…"/></div></div>
+   <div class="fg"><label class="fl">Email</label><input class="fi" id="f-email" type="email" placeholder="contact@entreprise.fr"/></div>
+   <div class="fg"><label class="fl">Téléphone</label><input class="fi" id="f-tel" type="tel" placeholder="06 00 00 00 00"/></div>
+   <div class="fg"><label class="fl">Contact</label><input class="fi" id="f-contact" placeholder="Marie Dupont — RH"/></div>
+   <div class="fg"><label class="fl">Statut</label><select class="fi" id="f-statut"><option value="attente">En attente</option><option value="contact">Contacté</option><option value="ok">Accord</option><option value="non">Refus</option></select></div>
+   <div class="fg"><label class="fl">Notes</label><textarea class="fi" id="f-notes" rows="2" placeholder="Relance prévue le…"></textarea></div>`,
+  `<div class="fg"><label class="fl">Nom du lycée</label><input class="fi" id="f-nom" placeholder="Ex: Lycée Victor Hugo"/></div>
+   <div class="fr"><div class="fg"><label class="fl">Ville</label><input class="fi" id="f-ville" placeholder="Bordeaux"/></div><div class="fg"><label class="fl">Type</label><select class="fi" id="f-secteur"><option>Général</option><option>Professionnel</option><option>Technologique</option><option>Privé</option></select></div></div>
+   <div class="fg"><label class="fl">Email</label><input class="fi" id="f-email" type="email" placeholder="contact@lycee.fr"/></div>
+   <div class="fg"><label class="fl">Téléphone</label><input class="fi" id="f-tel" type="tel" placeholder="05 00 00 00 00"/></div>
+   <div class="fg"><label class="fl">Contact</label><input class="fi" id="f-contact" placeholder="M. Martin — Proviseur"/></div>
+   <div class="fg"><label class="fl">Statut</label><select class="fi" id="f-statut"><option value="attente">En attente</option><option value="contact">Contacté</option><option value="ok">Accord</option><option value="non">Refus</option></select></div>
+   <div class="fg"><label class="fl">Notes</label><textarea class="fi" id="f-notes" rows="2" placeholder="Réponse attendue le…"></textarea></div>`,
+  `<div class="fg"><label class="fl">Titre / adresse</label><input class="fi" id="f-nom" placeholder="Ex: T2 rue des Fleurs"/></div>
+   <div class="fr"><div class="fg"><label class="fl">Ville</label><input class="fi" id="f-ville" placeholder="Bordeaux"/></div><div class="fg"><label class="fl">Type</label><select class="fi" id="f-secteur"><option>Airbnb</option><option>Location longue durée</option><option>Colocation</option><option>Résidence étudiante</option></select></div></div>
+   <div class="fr"><div class="fg"><label class="fl">Loyer (€/mois)</label><input class="fi" id="f-email" placeholder="650 €"/></div><div class="fg"><label class="fl">Surface (m²)</label><input class="fi" id="f-tel" placeholder="28"/></div></div>
+   <div class="fg"><label class="fl">Contact / lien</label><input class="fi" id="f-contact" placeholder="Agence / lien annonce"/></div>
+   <div class="fg"><label class="fl">Statut</label><select class="fi" id="f-statut"><option value="attente">En attente</option><option value="contact">Contacté</option><option value="ok">Retenu</option><option value="non">Non disponible</option></select></div>
+   <div class="fg"><label class="fl">Notes</label><textarea class="fi" id="f-notes" rows="2" placeholder="Disponible à partir du…"></textarea></div>`,
+];
+
+function renderPanel(t){
+  const tk=TC[t].key;
+  const items=data[tk];
+  const s=items.reduce((a,e)=>{a[e.statut]=(a[e.statut]||0)+1;return a},{});
+  let h=`<div class="kpi-row">
+    <div class="kpi ${TC[t].kc}"><div class="kpi-n">${items.length}</div><div class="kpi-l">Total</div></div>
+    <div class="kpi k-wait"><div class="kpi-n">${s.attente||0}</div><div class="kpi-l">En attente</div></div>
+    <div class="kpi k-ok"><div class="kpi-n">${s.ok||0}</div><div class="kpi-l">Accordés</div></div>
+    <div class="kpi k-no"><div class="kpi-n">${s.non||0}</div><div class="kpi-l">Refus</div></div>
+  </div>
+  <div class="list-top"><span class="list-top-label">${items.length} ${items.length===1?TC[t].label:TC[t].label+'s'}</span>
+  <button class="add-btn ${TC[t].ac}" onclick="openModal(${t})"><i class="ti ti-plus"></i>Ajouter</button></div>
+  <div class="entries">`;
+  if(!items.length){
+    const msgs=['Aucune entreprise encore.\nChaque appel te rapproche du oui !','Aucun lycée encore.\nLe stage de tes rêves t\'attend !','Aucun logement encore.\nTon chez-toi t\'attend !'];
+    h+=`<div class="empty"><i class="ti ${TC[t].icon}"></i><p>${msgs[t].replace('\n','<br>')}</p>
+    <button class="empty-cta ${TC[t].ac}" onclick="openModal(${t})"><i class="ti ti-plus"></i> Ajouter</button></div>`;
+  } else {
+    items.forEach((e,i)=>{
+      const sp=SL[e.statut]||SL.attente;
+      const em=emoji(t,e.nom);
+      const cc=e.statut==='ok'?' done':e.statut==='non'?' refused':'';
+      h+=`<div class="entry-card${cc}" onclick="openModal(${t},${i})">
+        <div class="card-body">
+          <div class="avatar ${TC[t].av}">${em}</div>
+          <div class="card-info">
+            <div class="card-name">${e.nom}</div>
+            <div class="card-meta">${[e.ville,e.secteur].filter(Boolean).join(' · ')||'&nbsp;'}</div>
+          </div>
+          <div class="sp ${sp.c}">${sp.l}</div>
+        </div>`;
+      if(e.notes)h+=`<div class="card-note">${e.notes}</div>`;
+      const acts=[];
+      if(e.tel)acts.push(`<button class="ca ca-call" onclick="callNum('${e.tel}',event)"><i class="ti ti-phone"></i>Appeler</button>`);
+      if(e.email)acts.push(`<button class="ca ca-mail" onclick="cpyMail('${e.email}',event)"><i class="ti ti-mail"></i>Copier email</button>`);
+      acts.push(`<button class="ca" onclick="openModal(${t},${i})"><i class="ti ti-edit"></i>Modifier</button>`);
+      h+=`<div class="card-actions">${acts.slice(0,3).join('')}</div></div>`;
+    });
+  }
+  h+=`</div>`;
+  document.getElementById('panel-'+t).innerHTML=h;
+  updateGlobal();
+}
+
+function switchTab(t){
+  ct=t;wsi=0;
+  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',i===t));
+  document.querySelectorAll('.panel').forEach((el,i)=>el.classList.toggle('active',i===t));
+  drawWall(t,0);startTimer(t);
+}
+
+function openModal(t,idx){
+  ct=t;ei=idx!==undefined?idx:-1;
+  document.getElementById('mt').textContent=ei>=0?'Modifier':'Nouveau '+TC[t].label;
+  const mi=document.getElementById('mi');
+  mi.style.cssText=`width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;background:${TC[t].lclr}`;
+  mi.innerHTML=`<i class="ti ${TC[t].icon}" style="color:${TC[t].dclr}"></i>`;
+  document.getElementById('mb').innerHTML=FORMS[t];
+  document.getElementById('bsave').className='btn-save '+TC[t].bs;
+  document.getElementById('bdel').style.display=ei>=0?'flex':'none';
+  if(ei>=0){
+    const e=data[TC[t].key][ei];
+    ['nom','ville','email','tel','contact','secteur','statut','notes'].forEach(k=>{const el=document.getElementById('f-'+k);if(el)el.value=e[k]||'';});
+  }
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+function closeIfOut(e){if(e.target===document.getElementById('modal'))closeModal();}
+function saveEntry(){
+  const entry={};
+  ['nom','ville','email','tel','contact','secteur','statut','notes'].forEach(k=>{const el=document.getElementById('f-'+k);if(el)entry[k]=el.value.trim();});
+  if(!entry.nom){document.getElementById('f-nom').focus();return;}
+  if(ei>=0)data[TC[ct].key][ei]=entry;else data[TC[ct].key].push(entry);
+  persist();renderPanel(ct);closeModal();
+}
+function delEntry(){
+  if(!confirm('Supprimer cette entrée ?'))return;
+  data[TC[ct].key].splice(ei,1);persist();renderPanel(ct);closeModal();
+}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
+function callNum(tel,e){e.stopPropagation();window.location.href='tel:'+tel.replace(/\s/g,'');}
+function cpyMail(v,e){e.stopPropagation();navigator.clipboard.writeText(v).then(()=>showToast('Email copié !')).catch(()=>showToast(v));}
+
+[0,1,2].forEach(t=>renderPanel(t));
+drawWall(0,0);startTimer(0);
+</script>
+</body>
+</html>
